@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Mi Aplicación{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Hope</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Inicio</a> |
+      <a href="{{ url_for('capstone') }}">Capstone</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>Este es el footer comun</p>
+  </footer>
+</body>
+</html>
