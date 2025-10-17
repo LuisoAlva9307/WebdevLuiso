@@ -1,0 +1,111 @@
+from flask import Flask, request, jsonify
+from datetime import date
+
+app = Flask(__name__)
+
+
+data = {
+    "usuarios": [
+        {
+            "id": 1,
+            "nombre": "Bienvenido Lopez",
+            "correo": "habichuelasdemisuegra@gmail.com",
+            "registrad@": "2025-10-16",
+            "rol": "cliente"
+        },
+        {
+            "id": 2,
+            "nombre": "Teofimo Alva",
+            "correo": "Sushiburrito@arecibointer.com",
+            "registrad@": "2025-10-19",
+            "rol": "administrador"
+        }
+    ],
+    "productos": [
+        {
+            "id": 1,
+            "nombre": "Alienware 9000",
+            "descripcion": "Labtop para infantes",
+            "precio": 10.000,
+            "stock": 12,
+            "categoria": "Electrónica"
+        },
+        {
+            "id": 2,
+            "nombre": "Repelente para suegras molestas",
+            "descripcion": "Disco de franco de vita.",
+            "precio": 10.00,
+            "stock": 45,
+            "categoria": "Accesorios esenciales"
+        }
+    ]
+}
+
+
+
+@app.route('/info', methods=['GET'])
+def info():
+    return jsonify({
+        "sistema": "sistema de usuarios y productos",
+        "version": "2.0",
+        "autor": "Carlos romero barcelo",
+        "descripcion": "Servidor con gestoria de productos y usuarios"
+    }), 200
+
+
+
+@app.route('/crear_usuario', methods=['POST'])
+def crear_usuario():
+    data_json = request.get_json()
+
+    # Validar formato JSON
+    if not data_json:
+        return jsonify({"error": "Debe enviar los datos en formato JSON."}), 400
+
+    nombre = data_json.get("nombre")
+    correo = data_json.get("correo")
+    rol = data_json.get("rol", "cliente")  
+
+    # Validar campos obligatorios
+    if not nombre or not correo:
+        return jsonify({
+            "error": "Faltan campos requeridos: 'nombre' y 'correo'."
+        }), 400
+
+    nuevo_usuario = {
+        "id": len(data["usuarios"]) + 1,
+        "nombre": nombre,
+        "correo": correo,
+        "fecha_registro": str(date.today()),
+        "rol": rol
+    }
+
+    data["usuarios"].append(nuevo_usuario)
+
+    return jsonify({
+        "mensaje": "Usuario creado exitosamente.",
+        "usuario": nuevo_usuario
+    }), 201
+
+
+
+@app.route('/usuarios', methods=['GET'])
+def obtener_usuarios():
+    usuarios = data["usuarios"]
+    if not usuarios:
+        return jsonify({"mensaje": "No hay usuarios registrados."}), 200
+    return jsonify({"usuarios": usuarios}), 200
+
+
+
+@app.route('/productos', methods=['GET'])
+def obtener_productos():
+    productos = data["productos"]
+    if not productos:
+        return jsonify({"mensaje": "No hay productos disponibles."}), 200
+    return jsonify({"productos": productos}), 200
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
