@@ -1,0 +1,28 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "QWelcome to my server"
+
+@app.route('/info', methods=['GET'])
+def info():
+    return jsonify({
+        "app": "Simple server",
+        "version": "6.9",
+        "author": "Timothy Alpaca"
+    }), 200
+
+@app.route('/message', methods=['POST'])
+def message():
+    data = request.get_json()
+    if not data or 'message' not in data:
+        return jsonify({"error": "must be in JSON format"}), 400
+
+    user_message = data['message']
+    response = f"I received your message: '{user_message}'. Thanks for sending it!"
+    return jsonify({"response": response}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)
